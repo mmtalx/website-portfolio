@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VFX Portfolio — Showreel</title>
+
+<!-- Geometric sans-serif: Manrope (Google Fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     RESET & BASE
+  ============================================ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a;
+    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  a, button, video, [data-grid-item] {
+    cursor: none;
+  }
+
+  /* ============================================
+     CUSTOM CURSOR — difference-blended orange dot
+  ============================================ */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #d9531e;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  /* ============================================
+     HERO SECTION (full-screen showreel)
+  ============================================ */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000; /* shows while video loads */
+  }
+
+  /* Background video, covers viewport without distortion */
+  .hero__video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* Subtle darkening so foreground text stays legible over bright footage */
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ============================================
+     NAVIGATION — top right, above video
+     One unbroken rectangle: items are flush with zero gap,
+     every block shares identical size/padding, and only
+     background-color shifts to signal active/hover states.
+  ============================================ */
+  .nav {
+    position: fixed;
+    top: 30px;
+    right: 100px;
+    z-index: 10;
+    border-radius: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    background-color: rgba(17, 17, 17, 0.55); /* single shared fill for inactive segments */
+    backdrop-filter: blur(4px);
+    border-radius: 0 !important; /* sharp corners — no inherited rounding */
+  }
+
+  .nav__item {
+    margin: 0; /* items stay flush against each other — zero space between blocks */
+    border-radius: 0 !important;
+  }
+
+  .nav__link {
+    display: block;
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 0 !important;
+    line-height: 1; /* keeps text perfectly centered against the thin top/bottom padding */
+    position: relative; /* anchors the invisible ::after hit area below */
+
+    /* Uniform across every item — active/inactive differ ONLY by background-color,
+       never by size, so nothing shifts width or height on state change. */
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 40px; /* thin vertical padding, wide horizontal — flat rectangular blocks */
+
+    /* background-color is the sole animated property — no transform, no scale */
+    transition: background-color 0.25s ease;
+  }
+
+  /* Invisible touch target — expands the tappable area to 48px tall
+     (meets the mobile minimum) without touching the visible bar's
+     thin 6px/40px padding or design. Purely a hit-area overlay. */
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 48px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+  }
+
+  .nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav__link:focus-visible {
+    outline: 2px solid #d9531e;
+    outline-offset: -2px; /* inset, since there's no surrounding gap to render outside of */
+  }
+
+  /* Active state — solid burnt orange. Same font-size/padding as every
+     other item; only the fill color changes. */
+  .nav__link.is-active {
+    background-color: #d9531e;
+  }
+
+  .nav__link.is-active:hover {
+    background-color: #c14a1a; /* slightly darker on hover — color only */
+  }
+
+  /* ============================================
+     SCROLL PROMPT — bottom center, typewriter loop
+     --scroll-width is set by JS to the exact pixel width of the
+     text (see script below); the keyframes below just consume it.
+     A 90px fallback covers the brief instant before JS runs.
+  ============================================ */
+  .scroll-prompt {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b3b3b3; /* muted light gray */
+    text-align: center;
+    cursor: pointer;
+    width: var(--scroll-width, 90px); /* exact click target, matches the typed-out text precisely */
+  }
+
+  /* The animated element is a separate inline-block child: overflow/white-space
+     here clip the text to whatever width the keyframes currently allow,
+     producing the type-out illusion. */
+  .scroll-prompt__text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    width: 0;
+    border-right: 1px solid #b3b3b3; /* typewriter caret */
+    animation: typing 6s steps(10, end) infinite; /* 10 steps = 10 characters in "[ SCROLL ]" */
+  }
+
+  @keyframes typing {
+    0%      { width: 0; }                          /* start empty */
+    35%     { width: var(--scroll-width, 90px); }   /* type out, left to right */
+    65%     { width: var(--scroll-width, 90px); }   /* pause, fully readable */
+    65.01%  { width: 0; }                           /* instant reset — not a gradual erase */
+    100%    { width: 0; }                           /* hold blank until the loop restarts */
+  }
+
+  /* Respect users who prefer reduced motion — show the full phrase, static */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-prompt__text {
+      animation: none;
+      width: var(--scroll-width, 90px);
+    }
+  }
+
+  /* ============================================
+     RESPONSIVE ADJUSTMENTS
+  ============================================ */
+  @media (max-width: 600px) {
+    .nav {
+      top: 16px;
+      right: 16px;
+    }
+
+    .nav__link {
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      padding: 5px 20px;
+    }
+
+    .scroll-prompt {
+      font-size: 11px;
+      bottom: 24px;
+    }
+  }
+
+  /* ============================================
+     HEADER NAMEPLATE — top-left, balances the nav.
+     A two-face cube: "front" carries the name, "top" carries
+     the title. The cube only ever rotates -90deg/0deg between
+     them — never a full 360 — so it reads as a name plate
+     tipping open to reveal a subtitle, not a spinning die.
+  ============================================ */
+  .nameplate {
+    position: fixed;
+    top: 30px; /* mirrors .nav's top: 30px exactly */
+    left: 100px; /* mirrors .nav's right: 100px exactly, for symmetrical margins */
+    z-index: 100;
+    perspective: 500px; /* gives the flip actual depth instead of a flat scale */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* Delayed UI reveal — added by JS after 6s or on early scroll */
+  .is-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .nameplate__cube {
+    position: relative;
+    width: 210px;
+    height: 22px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg); /* default: parked on the name face */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* snaps cleanly on hover in/out */
+  }
+
+  /* Only rotate to reveal the title while the cursor is actively over the nameplate */
+  .nameplate:hover .nameplate__cube {
+    transform: rotateX(-90deg);
+  }
+
+  /* Both faces share position/typography; only color and the
+     rotateX/translateZ placement differ between them. */
+  .nameplate__face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    backface-visibility: hidden; /* face disappears cleanly once it rotates away */
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  /* translateZ(11px) = half the cube's 22px height — pushes each
+     face out to the edge of the "box" so they meet at a hinge,
+     rather than overlapping at the center. */
+  .nameplate__face--name {
+    color: #ffffff;
+    transform: rotateX(0deg) translateZ(11px);
+  }
+
+  .nameplate__face--title {
+    color: #d9531e; /* ties the reveal to the nav's active-state accent */
+    transform: rotateX(90deg) translateZ(11px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nameplate__cube {
+      transition: none; /* stays parked on whichever face, no animated flip */
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nameplate {
+      top: 16px;
+      left: 16px; /* mirrors .nav's right: 16px at this breakpoint */
+    }
+
+    .nameplate__cube {
+      width: 170px;
+      height: 18px;
+    }
+
+    .nameplate__face {
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+  }
+
+  /* ============================================
+     PORTFOLIO GRID — sits directly below the hero.
+     2-up grid, zero gap, each cell flush against its neighbors.
+  ============================================ */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .grid-item {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Large low-opacity index number, centered, behind the info text */
+  .grid-item__number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(6rem, 14vw, 11rem);
+    color: #ffffff;
+    opacity: 0.12;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Soft bottom scrim so title/tags stay legible over any background color */
+  .grid-item__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 45%);
+    pointer-events: none;
+  }
+
+  /* Strict bottom-left text block — hidden until hover */
+  .grid-item__info {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    right: 50px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .grid-item__title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+
+  .grid-item__tags {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  /* :hover covers desktop; .is-revealed (toggled by JS) covers touch */
+  .grid-item:hover .grid-item__info,
+  .grid-item.is-revealed .grid-item__info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .grid-item--1 { background-color: #3a3a3d; } /* slate gray */
+  .grid-item--2 { background-color: #3d2b56; } /* deep purple */
+  .grid-item--3 { background-color: #5c2020; } /* oxblood red */
+  .grid-item--4 { background-color: #1f4632; } /* deep forest green */
+
+  @media (max-width: 600px) {
+    .portfolio-grid {
+      grid-template-columns: 1fr; /* single column once two-up gets too cramped */
+    }
+
+    .grid-item__info {
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+    }
+
+    .grid-item__tags {
+      font-size: 18px;
+    }
+
+    .grid-item__number {
+      font-size: clamp(5rem, 22vw, 7rem);
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="custom-cursor"></div>
+
+  <!-- ============================================
+       HERO SECTION
+  ============================================ -->
+  <section class="hero">
+
+    <!-- Background showreel video: autoplay, looped, muted (required for autoplay in all browsers) -->
+    <video
+      class="hero__video"
+      autoplay
+      loop
+      muted
+      playsinline
+      poster="assets/video_fallback.jpg"
+      aria-label="Showreel background video">
+      <!-- Local relative path — keep showreel.mp4 alongside this HTML file -->
+      <source src="./showreel.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Darkening overlay for text legibility -->
+    <div class="hero__overlay"></div>
+
+    <!-- Header nameplate: cube flips between name and title, balances the nav on the opposite corner -->
+    <div class="nameplate" aria-label="Esra Sitepu, 3D Artist - FX">
+      <div class="nameplate__cube">
+        <span class="nameplate__face nameplate__face--name">Esra Sitepu</span>
+        <span class="nameplate__face nameplate__face--title">3D Artist - FX</span>
+      </div>
+    </div>
+
+    <!-- Navigation: one flush bar — <li> items are adjacent with zero gap -->
+    <nav class="nav">
+      <ul class="nav__list">
+        <li class="nav__item"><a href="#projects" class="nav__link is-active" data-nav>PROJECTS</a></li>
+        <li class="nav__item"><a href="#about" class="nav__link" data-nav>ABOUT</a></li>
+      </ul>
+    </nav>
+
+    <!-- Scroll prompt — text types out, pauses, instantly resets, loops -->
+    <div class="scroll-prompt" id="scrollPrompt">
+      <span class="scroll-prompt__text">[ SCROLL ]</span>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       PORTFOLIO GRID (below hero)
+  ============================================ -->
+  <section class="portfolio-grid">
+
+    <div class="grid-item grid-item--1" data-grid-item>
+      <span class="grid-item__number">1</span>
+      <div class="grid-item__scrim"></div>
+      <div class="grid-item__info">
+        <h3 class="grid-item__title">The Title Of The Project</h3>
+        <p class="grid-item__tags">Lighting, Animation, Rendering</p>
+      </div>
+    </div>
+
+    <div class="grid-item grid-item--2" data-grid-item>
+      <span class="grid-item__number">2</span>
+      <div class="grid-item__scrim"></div>
+      <div class="grid-item__info">
+        <h3 class="grid-item__title">The Title Of The Project</h3>
+        <p class="grid-item__tags">Lighting, Animation, Rendering</p>
+      </div>
+    </div>
+
+    <div class="grid-item grid-item--3" data-grid-item>
+      <span class="grid-item__number">3</span>
+      <div class="grid-item__scrim"></div>
+      <div class="grid-item__info">
+        <h3 class="grid-item__title">The Title Of The Project</h3>
+        <p class="grid-item__tags">Lighting, Animation, Rendering</p>
+      </div>
+    </div>
+
+    <div class="grid-item grid-item--4" data-grid-item>
+      <span class="grid-item__number">4</span>
+      <div class="grid-item__scrim"></div>
+      <div class="grid-item__info">
+        <h3 class="grid-item__title">The Title Of The Project</h3>
+        <p class="grid-item__tags">Lighting, Animation, Rendering</p>
+      </div>
+    </div>
+
+  </section>
+
+  <script>
+
+    /* ============================================
+       NAV ACTIVE STATE
+       Clicking a link marks it active and clears the others,
+       so the nav is fully functional rather than static markup.
+    ============================================ */
+    const navLinks = document.querySelectorAll('[data-nav]');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault(); // placeholder hrefs — swap for real anchors/routes later
+        navLinks.forEach(l => l.classList.remove('is-active'));
+        link.classList.add('is-active');
+      });
+    });
+
+    /* ============================================
+       SCROLL PROMPT — exact-width measurement
+       scrollWidth reports the text's natural, unclipped width even
+       though overflow:hidden + the typing animation keep it visually
+       clipped. We wait for fonts to finish loading first since a
+       font swap (Manrope arriving after the fallback) can shift
+       glyph widths and throw off an early measurement.
+    ============================================ */
+    function measureScrollPromptWidth() {
+      const promptEl = document.getElementById('scrollPrompt');
+      const textEl = promptEl.querySelector('.scroll-prompt__text');
+      const exactWidth = textEl.scrollWidth;
+      promptEl.style.setProperty('--scroll-width', `${exactWidth}px`);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measureScrollPromptWidth);
+    } else {
+      // Fallback for browsers without the Font Loading API
+      measureScrollPromptWidth();
+    }
+
+    // Re-measure if a breakpoint changes the responsive font-size,
+    // since that changes the text's pixel width too.
+    window.addEventListener('resize', measureScrollPromptWidth);
+
+    /* ============================================
+       SCROLL PROMPT — click to advance
+       Clicking it smooth-scrolls one viewport down,
+       reinforcing the "scroll to continue" affordance.
+    ============================================ */
+    const scrollPrompt = document.getElementById('scrollPrompt');
+
+    scrollPrompt.addEventListener('click', () => {
+      window.scrollTo({
+        top: window.innerHeight,
+        behavior: 'smooth'
+      });
+    });
+
+    /* ============================================
+       AUTOPLAY SAFETY NET
+       Some browsers still block autoplay on first paint even when
+       muted; this re-attempts playback once the video is ready.
+    ============================================ */
+    const heroVideo = document.querySelector('.hero__video');
+
+    heroVideo.addEventListener('loadeddata', () => {
+      heroVideo.play().catch(() => {
+        // Autoplay blocked — poster image remains visible as fallback.
+      });
+    });
+
+    /* ============================================
+       DELAYED UI REVEAL — header nameplate + nav
+       Hidden at paint (opacity: 0). Revealed after 6 s,
+       or immediately if the user scrolls past 50 px first.
+       Either path cancels the other so revealUI fires exactly once.
+    ============================================ */
+    const navEl       = document.querySelector('.nav');
+    const nameplateEl = document.querySelector('.nameplate');
+
+    function revealUI() {
+      navEl.classList.add('is-visible');
+      nameplateEl.classList.add('is-visible');
+    }
+
+    // 6-second timer — fires unless the scroll override beats it
+    const revealTimer = setTimeout(revealUI, 6000);
+
+    // Scroll override — fires as soon as the user scrolls > 50 px
+    function onScrollReveal() {
+      if (window.scrollY > 50) {
+        clearTimeout(revealTimer);           // cancel the pending 6 s timer
+        revealUI();
+        window.removeEventListener('scroll', onScrollReveal); // one-shot
+      }
+    }
+
+    window.addEventListener('scroll', onScrollReveal, { passive: true });
+
+    /* ============================================
+       GRID ITEMS — touch parity
+       :hover handles desktop reveal; touch devices have no
+       hover state, so tapping a tile toggles the same reveal
+       via .is-revealed instead. Mirrors the nav's hover/tap split.
+    ============================================ */
+    const gridItems = document.querySelectorAll('[data-grid-item]');
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+    if (isTouchDevice) {
+      gridItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const wasRevealed = item.classList.contains('is-revealed');
+          gridItems.forEach(i => i.classList.remove('is-revealed'));
+          if (!wasRevealed) item.classList.add('is-revealed');
+        });
+      });
+    }
+
+    /* ============================================
+       CUSTOM CURSOR — hardware-accelerated tracking
+    ============================================ */
+    const cursor = document.querySelector('.custom-cursor');
+
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metahuman — Esra Sitepu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     RESET & BASE
+  ============================================ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #111111;
+    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    cursor: none;
+  }
+
+  a, button, video, img {
+    cursor: none;
+  }
+
+  /* ============================================
+     CUSTOM CURSOR — difference-blended orange dot
+  ============================================ */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #d9531e;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  /* ============================================
+     NAMEPLATE — fixed top-left
+  ============================================ */
+  .nameplate {
+    position: fixed;
+    top: 30px;
+    left: 100px;
+    z-index: 100;
+    perspective: 500px;
+  }
+
+  .nameplate__cube {
+    position: relative;
+    width: 210px;
+    height: 22px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .nameplate:hover .nameplate__cube {
+    transform: rotateX(-90deg);
+  }
+
+  .nameplate__face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    backface-visibility: hidden;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  .nameplate__face--name {
+    color: #ffffff;
+    transform: rotateX(0deg) translateZ(11px);
+  }
+
+  .nameplate__face--title {
+    color: #d9531e;
+    transform: rotateX(90deg) translateZ(11px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nameplate__cube {
+      transition: none;
+    }
+  }
+
+  /* ============================================
+     NAVIGATION — fixed top-right
+  ============================================ */
+  .nav {
+    position: fixed;
+    top: 30px;
+    right: 100px;
+    z-index: 100;
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    background-color: rgba(17, 17, 17, 0.55);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav__item {
+    margin: 0;
+  }
+
+  .nav__link {
+    display: block;
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 40px;
+    line-height: 1;
+    position: relative;
+    transition: background-color 0.25s ease;
+  }
+
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 48px;
+    transform: translateY(-50%);
+  }
+
+  .nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav__link.is-active {
+    background-color: #d9531e;
+  }
+
+  .nav__link.is-active:hover {
+    background-color: #c14a1a;
+  }
+
+  /* ============================================
+     PAGE WRAPPER — stacks intro above carousel
+  ============================================ */
+  .page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ============================================
+     METAHUMAN INTRO — project header text block
+  ============================================ */
+  .metahuman-intro {
+    padding: 0 320px 0 240px;
+    margin-top: 150px;
+    flex-shrink: 0;
+  }
+
+  .metahuman-intro__title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .metahuman-intro__subtitle {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    color: #ffffff;
+    text-transform: none;
+    margin-bottom: 32px;
+  }
+
+  .metahuman-intro__body {
+  }
+
+  .metahuman-intro__body p {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #999999;
+    margin-bottom: 16px;
+  }
+
+  .metahuman-intro__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ============================================
+     CAROUSEL WRAPPER — vertically centered in viewport
+  ============================================ */
+  main.carousel {
+    margin-top: 80px;
+    position: relative;
+  }
+
+  /* ============================================
+     CAROUSEL TRACK — horizontal free scroll
+  ============================================ */
+  .carousel__track {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    width: 100vw;
+    padding: 0 240px;
+
+    /* Hide native scrollbar across all browsers */
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE / Edge legacy */
+
+    /* Smooth scroll for button-triggered jumps only.
+       No scroll-snap-type — free inertial scroll. */
+    scroll-behavior: smooth;
+  }
+
+  .carousel__track::-webkit-scrollbar {
+    display: none;               /* Chrome / Safari / Opera */
+  }
+
+  /* ============================================
+     CAROUSEL ITEMS — locked height, fluid width
+  ============================================ */
+  .carousel__item {
+    height: 70vh;
+    width: max-content;
+    flex-shrink: 0;
+    display: block;
+    position: relative;
+  }
+
+  /* ============================================
+     PLAY OVERLAY — click-to-play button
+  ============================================ */
+  .play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(17, 17, 17, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Allows the click to pass through to the video beneath */
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+
+  /* The Play Triangle */
+  .play-overlay::after {
+    content: '';
+    display: block;
+    margin-left: 6px;
+    border-style: solid;
+    border-width: 12px 0 12px 20px;
+    border-color: transparent transparent transparent #ffffff;
+  }
+
+  /* Hide overlay when playing */
+  .carousel__item.is-playing .play-overlay,
+  .media-stack__item.is-playing .play-overlay {
+    opacity: 0;
+  }
+
+  /* All media children fill the item height; width is determined
+     by the media's own intrinsic aspect ratio */
+  .carousel__item video,
+  .carousel__item img {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+    border-radius: 0;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Placeholder tints — visible until real media sources are dropped in */
+  .carousel__item--1 video {
+    min-width: calc(70vh * (9 / 16));
+  }
+
+  .carousel__item--2 video {
+    min-width: calc(70vh * (9 / 16));
+  }
+
+  .carousel__item--3 video {
+    min-width: calc(70vh * (16 / 9));
+  }
+
+  /* ============================================
+     ARROW BUTTONS — fixed, vertically centered
+  ============================================ */
+  .carousel__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel__btn--prev {
+    left: 100px;
+  }
+
+  .carousel__btn--next {
+    right: 100px;
+  }
+
+  /* The visible arrow: a 15×15 square rotated 45° with only two borders drawn.
+     Prev shows left-pointing chevron (bottom-left borders),
+     Next shows right-pointing chevron (top-right borders). */
+  .carousel__btn__arrow {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-color: #ffffff;
+    border-style: solid;
+    border-width: 0;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.7;
+  }
+
+  .carousel__btn--prev .carousel__btn__arrow {
+    transform: rotate(225deg);   /* points left */
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+
+  .carousel__btn--next .carousel__btn__arrow {
+    transform: rotate(45deg);    /* points right */
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+
+  .carousel__btn:hover .carousel__btn__arrow {
+    opacity: 1;
+    border-color: #d9531e;
+  }
+
+  /* Large invisible hit area via ::before pseudo-element.
+     Extends the click zone to a 120×100% tall vertical strip
+     so the full left / right edge of the viewport is responsive. */
+  .carousel__btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 100vh;
+    background: transparent;
+  }
+
+  .carousel__btn--prev::before {
+    right: 50%;
+    transform: translate(50%, -50%);
+  }
+
+  .carousel__btn--next::before {
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ============================================
+     ENVIRONMENT INTRO — project header text block
+     (mirrors .metahuman-intro exactly)
+  ============================================ */
+  .environment-intro {
+    padding: 0 320px 0 240px;
+    margin-top: 200px;
+    flex-shrink: 0;
+  }
+
+  .environment-intro__title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .environment-intro__subtitle {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    color: #ffffff;
+    text-transform: none;
+    margin-bottom: 32px;
+  }
+
+  .environment-intro__body p {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #999999;
+    margin-bottom: 16px;
+  }
+
+  .environment-intro__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ============================================
+     MEDIA STACK — vertical stack of 16:9 items
+  ============================================ */
+  .media-stack {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 80px;
+    padding: 0 100px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .media-stack__item {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .media-stack__item:first-child,
+  .media-stack__item:last-child {
+    grid-column: span 2;
+  }
+
+  .media-stack__item video,
+  .media-stack__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Reuses .play-overlay / .is-playing behavior already defined above */
+
+</style>
+</head>
+<body>
+
+  <!-- Custom difference-blended cursor -->
+  <div class="custom-cursor"></div>
+
+  <!-- Nameplate — fixed top-left -->
+  <a href="index.html" class="nameplate" aria-label="Esra Sitepu, 3D Artist — FX">
+    <div class="nameplate__cube">
+      <span class="nameplate__face nameplate__face--name">Esra Sitepu</span>
+      <span class="nameplate__face nameplate__face--title">3D Artist - FX</span>
+    </div>
+  </a>
+
+  <!-- Navigation — fixed top-right, no active state on either item -->
+  <nav class="nav">
+    <ul class="nav__list">
+      <li class="nav__item"><a href="index.html" class="nav__link">PROJECTS</a></li>
+      <li class="nav__item"><a href="about.html" class="nav__link">ABOUT</a></li>
+    </ul>
+  </nav>
+
+  <div class="page">
+
+    <!-- ============================================
+         PROJECT INTRO — title, subtitle, description
+    ============================================ -->
+    <section class="metahuman-intro">
+      <h1 class="metahuman-intro__title">Metahuman</h1>
+      <p class="metahuman-intro__subtitle">Pipeline, Lighting, Animation Clean-up, Rendering&nbsp;&nbsp;/&nbsp;&nbsp;XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
+      <div class="metahuman-intro__body">
+        <p>This project involved the full integration of MetaHuman characters into a real-time production pipeline, combining Unreal Engine's rendering capabilities with Houdini-driven FX for cloth simulation, hair dynamics, and environmental interaction. The work spanned character look-development, lighting rigs built in Solaris, and final-frame rendering through Karma.</p>
+        <p>Animation clean-up was performed across motion-capture data to resolve contact artefacts and timing inconsistencies, ensuring characters read correctly against photoreal backgrounds. The pipeline was designed for iteration speed — enabling rapid lighting changes and material overrides without re-simulating — and ultimately delivered production-ready frames across multiple sequences for XLAB.</p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         CAROUSEL
+    ============================================ -->
+    <main class="carousel" aria-label="Project media carousel">
+
+    <div class="carousel__track" id="carouselTrack">
+
+      <!-- Item 1: Vertical video (1080×1920 / 9:16) -->
+      <div class="carousel__item carousel__item--1">
+        <video
+          loop
+          muted
+          playsinline
+          aria-label="Metahuman clip 1">
+          <source src="./assets/metahuman-01.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 2: Vertical video (1080×1920 / 9:16) -->
+      <div class="carousel__item carousel__item--2">
+        <video
+          loop
+          muted
+          playsinline
+          aria-label="Metahuman clip 2">
+          <source src="./assets/metahuman-02.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 3: Horizontal video (1920×1080 / 16:9) -->
+      <div class="carousel__item carousel__item--3">
+        <video
+          loop
+          muted
+          playsinline
+          aria-label="Metahuman clip 3">
+          <source src="./assets/metahuman-03.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+    </div>
+
+    <!-- Prev arrow -->
+    <button
+      class="carousel__btn carousel__btn--prev"
+      id="btnPrev"
+      aria-label="Scroll carousel left">
+      <span class="carousel__btn__arrow" aria-hidden="true"></span>
+    </button>
+
+    <!-- Next arrow -->
+    <button
+      class="carousel__btn carousel__btn--next"
+      id="btnNext"
+      aria-label="Scroll carousel right">
+      <span class="carousel__btn__arrow" aria-hidden="true"></span>
+    </button>
+
+  </main>
+
+    <!-- ============================================
+         ENVIRONMENT INTRO — title, subtitle, description
+    ============================================ -->
+    <section class="environment-intro">
+      <h1 class="environment-intro__title">Environment</h1>
+      <p class="environment-intro__subtitle">Layout, Lighting, Camera work, Rendering&nbsp;&nbsp;/&nbsp;&nbsp;Aras Design &amp; Motion &amp; XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
+      <div class="environment-intro__body">
+        <p>For environment work, i was responsible with layout, lighting, to modeling. As well as camera work such as pacing, blocking all assets and the camera, and also animate the camera itself.</p>
+        <p>my job also involve in placing camera, pacing the animation, as well as placement or placing the camera.</p>
+        <p>One of my earliest work is for BRI, i was responsible for all the aspect, for scatering i was utilize the scattering and the layout is based on the concept and that already provided, rendered with lumen.</p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         MEDIA STACK — vertical stack of 6 media items
+    ============================================ -->
+    <section class="media-stack" aria-label="Environment media stack">
+
+      <!-- Item 1: video (Blue placeholder) -->
+      <div class="media-stack__item">
+        <video
+          loop
+          muted
+          playsinline
+          style="background-color:#1e3a8a;"
+          aria-label="Environment clip 1">
+          <source src="./assets/environment-01.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 2: video (Green placeholder) -->
+      <div class="media-stack__item">
+        <video
+          loop
+          muted
+          playsinline
+          style="background-color:#166534;"
+          aria-label="Environment clip 2">
+          <source src="./assets/environment-02.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 3: video (Green placeholder) -->
+      <div class="media-stack__item">
+        <video
+          loop
+          muted
+          playsinline
+          style="background-color:#166534;"
+          aria-label="Environment clip 3">
+          <source src="./assets/environment-03.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 4: video (Green placeholder) -->
+      <div class="media-stack__item">
+        <video
+          loop
+          muted
+          playsinline
+          style="background-color:#166534;"
+          aria-label="Environment clip 4">
+          <source src="./assets/environment-04.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 5: video (Green placeholder) -->
+      <div class="media-stack__item">
+        <video
+          loop
+          muted
+          playsinline
+          style="background-color:#166534;"
+          aria-label="Environment clip 5">
+          <source src="./assets/environment-05.mp4" type="video/mp4">
+        </video>
+        <div class="play-overlay"></div>
+      </div>
+
+      <!-- Item 6: final still -->
+      <div class="media-stack__item">
+        <img src="./assets/environment-06.png" alt="Environment final still" style="background-color:#333333;">
+      </div>
+
+    </section>
+
+  </div><!-- /.page -->
+
+  <script>
+
+    /* ============================================
+       CUSTOM CURSOR — hardware-accelerated tracking
+    ============================================ */
+    const cursor = document.querySelector('.custom-cursor');
+
+    window.addEventListener('mousemove', (e) => {
+      if (cursor) {
+        cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+      }
+    });
+
+    /* ============================================
+       CAROUSEL SCROLL BUTTONS
+       Each click nudges the track 600px in the
+       appropriate direction using scrollBy().
+       scroll-behavior: smooth on the track handles
+       the animation — no JS easing needed.
+    ============================================ */
+    const track   = document.getElementById('carouselTrack');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+
+    btnPrev.addEventListener('click', () => {
+      track.scrollBy({ left: -600, behavior: 'smooth' });
+    });
+
+    btnNext.addEventListener('click', () => {
+      track.scrollBy({ left: 600, behavior: 'smooth' });
+    });
+
+    /* ============================================
+       RMB DRAG-TO-SCROLL
+       Right Mouse Button click-and-drag scrolls the
+       carousel track. contextmenu is suppressed only
+       over the track so the rest of the page is unaffected.
+    ============================================ */
+    let isDown = false;
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+
+    track.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // e.button === 0 strictly targets the Left Mouse Button
+
+      isDown = true;
+      isDragging = false;
+      /* Temporarily disable smooth scrolling so the drag feels instant and responsive 1:1 */
+      track.style.scrollBehavior = 'auto';
+
+      startX = e.pageX - track.offsetLeft;
+      scrollLeft = track.scrollLeft;
+    });
+
+    track.addEventListener('mouseleave', () => {
+      if (!isDown) return;
+      isDown = false;
+      track.style.scrollBehavior = 'smooth'; // Restore smooth scroll for the arrow buttons
+    });
+
+    track.addEventListener('mouseup', (e) => {
+      if (e.button !== 0) return;
+      isDown = false;
+      track.style.scrollBehavior = 'smooth';
+    });
+
+    track.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      isDragging = true;
+      e.preventDefault();
+
+      const x = e.pageX - track.offsetLeft;
+      const walk = (x - startX) * 1.5; // Multiplier: adjust 1.5 higher for faster swiping, lower for slower
+      track.scrollLeft = scrollLeft - walk;
+    });
+
+    /* ============================================
+       MANUAL CLICK-TO-PLAY
+       Targets both the carousel and the vertical
+       media-stack items — both share the same
+       .play-overlay markup and is-playing toggle.
+    ============================================ */
+    const carouselItems = document.querySelectorAll('.carousel__item, .media-stack__item');
+
+    carouselItems.forEach(item => {
+      const video = item.querySelector('video');
+      if (!video) return;
+
+      video.addEventListener('click', () => {
+        // If the user was swiping the carousel, abort the click-to-play
+        if (isDragging) return;
+
+        if (video.paused) {
+          video.play();
+          item.classList.add('is-playing');
+        } else {
+          video.pause();
+          item.classList.remove('is-playing');
+        }
+      });
+    });
+
+  </script>
+
+</body>
+</html>

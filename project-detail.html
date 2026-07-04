@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VFX Portfolio — Project Detail</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     RESET & BASE
+  ============================================ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    background-color: #0a0a0a;
+    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  a, button, video {
+    cursor: none;
+  }
+
+  /* ============================================
+     CUSTOM CURSOR — difference-blended orange dot
+  ============================================ */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #d9531e;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  /* ============================================
+     NAVIGATION — exact replica from homepage
+     Fixed top-right, one flush rectangle, no border-radius.
+  ============================================ */
+  .nav {
+    position: fixed;
+    top: 30px;
+    right: 100px;
+    z-index: 100;
+    border-radius: 0 !important;
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    background-color: rgba(17, 17, 17, 0.55);
+    backdrop-filter: blur(4px);
+    border-radius: 0 !important;
+  }
+
+  .nav__item {
+    margin: 0;
+    border-radius: 0 !important;
+  }
+
+  .nav__link {
+    display: block;
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 0 !important;
+    line-height: 1;
+    position: relative;
+
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 40px;
+
+    transition: background-color 0.25s ease;
+  }
+
+  /* Invisible 48px touch target */
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 48px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+  }
+
+  .nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav__link:focus-visible {
+    outline: 2px solid #d9531e;
+    outline-offset: -2px;
+  }
+
+  .nav__link.is-active {
+    background-color: #d9531e;
+  }
+
+  .nav__link.is-active:hover {
+    background-color: #c14a1a;
+  }
+
+  /* ============================================
+     NAMEPLATE — exact replica from homepage
+     Fixed top-left, cube flip reveals title on hover.
+  ============================================ */
+  .nameplate {
+    position: fixed;
+    top: 30px;
+    left: 100px;
+    z-index: 100;
+    perspective: 500px;
+  }
+
+  .nameplate__cube {
+    position: relative;
+    width: 210px;
+    height: 22px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .nameplate:hover .nameplate__cube {
+    transform: rotateX(-90deg);
+  }
+
+  .nameplate__face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    backface-visibility: hidden;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  .nameplate__face--name {
+    color: #ffffff;
+    transform: rotateX(0deg) translateZ(11px);
+  }
+
+  .nameplate__face--title {
+    color: #d9531e;
+    transform: rotateX(90deg) translateZ(11px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nameplate__cube {
+      transition: none;
+    }
+  }
+
+  /* ============================================
+     MAIN CONTENT CONTAINER
+     Centered, max 1200px, clear of the fixed header.
+  ============================================ */
+  .content {
+    max-width: 1200px;
+    margin: 150px auto 100px;
+    padding: 0 40px;
+  }
+
+  /* ============================================
+     INTRO / DESCRIPTION SECTION
+  ============================================ */
+  .project-intro {
+    margin-bottom: 60px;
+  }
+
+  /* "THE TITLE OF THE PROJECT" — small uppercase label */
+  .project-intro__label {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  /* "Lighting, Animation, Rendering" — large title-case tag line */
+  .project-intro__tags {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 36px;
+  }
+
+  /* Description copy — narrow column, small readable size */
+  .project-intro__description {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .project-intro__description p {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Blue studio name accent */
+  .accent--studio {
+    color: #3b82f6;
+  }
+
+  /* ============================================
+     VIDEO BLOCK
+     Full-width within the 1200px container.
+  ============================================ */
+  .project-video {
+    margin-bottom: 20px;
+  }
+
+  .project-video__player {
+    display: block;
+    width: 100%;
+    height: auto;
+    background-color: #ff0000; /* placeholder — replace with real src */
+    border-radius: 0;
+    /* Ensures a visible height even before src is set */
+    min-height: 200px;
+  }
+
+  /* ============================================
+     STILL IMAGE GRID
+     2-col masonry-style with span-2 full-width breaks.
+  ============================================ */
+  .project-stills {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  /* Base placeholder style shared by all still items */
+  .still {
+    display: block;
+    width: 100%;
+    background-color: #ff0000; /* placeholder — swap for <img> or real bg */
+    border-radius: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Full-width break — spans both columns */
+  .still--full {
+    grid-column: span 2;
+  }
+
+  /* Taller crop for visual variety on full-width items */
+  .still--full {
+    aspect-ratio: 21 / 9;
+  }
+
+  /* ============================================
+     RESPONSIVE ADJUSTMENTS
+  ============================================ */
+  @media (max-width: 900px) {
+    .content {
+      margin-top: 120px;
+      padding: 0 24px;
+    }
+
+    .project-intro__tags {
+      font-size: 26px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nav {
+      top: 16px;
+      right: 16px;
+    }
+
+    .nav__link {
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      padding: 5px 20px;
+    }
+
+    .nameplate {
+      top: 16px;
+      left: 16px;
+    }
+
+    .nameplate__cube {
+      width: 170px;
+      height: 18px;
+    }
+
+    .nameplate__face {
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      margin-top: 100px;
+      padding: 0 16px;
+    }
+
+    .project-intro__label {
+      font-size: 12px;
+    }
+
+    .project-intro__tags {
+      font-size: 20px;
+    }
+
+    .project-stills {
+      grid-template-columns: 1fr;
+    }
+
+    /* On single-column mobile, span-2 has no effect — reset it */
+    .still--full {
+      grid-column: span 1;
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="custom-cursor"></div>
+
+  <!-- ============================================
+       NAMEPLATE — fixed top-left
+  ============================================ -->
+  <div class="nameplate" aria-label="Esra Sitepu, 3D Artist - FX">
+    <div class="nameplate__cube">
+      <span class="nameplate__face nameplate__face--name">Esra Sitepu</span>
+      <span class="nameplate__face nameplate__face--title">3D Artist - FX</span>
+    </div>
+  </div>
+
+  <!-- ============================================
+       NAVIGATION — fixed top-right
+  ============================================ -->
+  <nav class="nav">
+    <ul class="nav__list">
+      <li class="nav__item"><a href="index.html#projects" class="nav__link is-active" data-nav>PROJECTS</a></li>
+      <li class="nav__item"><a href="index.html#about"    class="nav__link"           data-nav>ABOUT</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================
+       MAIN CONTENT
+  ============================================ -->
+  <main class="content">
+
+    <!-- INTRO / DESCRIPTION -->
+    <section class="project-intro">
+
+      <h1 class="project-intro__label">The Title Of The Project</h1>
+
+      <p class="project-intro__tags">Lighting, Animation, Rendering</p>
+
+      <div class="project-intro__description">
+        <p>
+          This project was a collaborative destruction simulation produced for
+          <span class="accent--studio">the Studio name</span> as part of a feature film
+          pipeline. The work involved full environment simulation, rigid-body dynamics,
+          and pyro-based fire and smoke effects rendered in Karma XPU.
+        </p>
+        <p>
+          The brief called for a sequence where a mid-century brutalist structure
+          collapses under seismic load — requiring both physically accurate debris
+          trajectories and art-directed hero pieces that read clearly on screen.
+          Fracture networks were authored in Houdini's constraint network system
+          and cached as USD for cross-department handoff.
+        </p>
+        <p>
+          Final comp was handled by the studio's compositing team. Esra's scope
+          covered FX development, sim iteration, look development of the dust and debris
+          materials, and delivery of rendered EXR sequences across twelve shots.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- PROJECT VIDEO -->
+    <div class="project-video">
+      <video
+        class="project-video__player"
+        controls
+        playsinline
+        aria-label="Project video">
+        <!--
+          Replace the src below with the actual video file path.
+          e.g. <source src="./assets/project-01.mp4" type="video/mp4">
+        -->
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <!-- STILL IMAGE GRID
+         Layout pattern (top to bottom):
+           [  half  ] [  half  ]    ← row 1: two 16/9 half-width stills
+           [    full-width     ]    ← row 2: one 21/9 full-width still
+           [  half  ] [  half  ]    ← row 3: two 16/9 half-width stills
+           [    full-width     ]    ← row 4: one 21/9 full-width still
+    -->
+    <div class="project-stills">
+
+      <!-- Row 1 — two half-width stills -->
+      <div class="still"       aria-label="Still image placeholder"></div>
+      <div class="still"       aria-label="Still image placeholder"></div>
+
+      <!-- Row 2 — full-width break -->
+      <div class="still still--full" aria-label="Full-width still image placeholder"></div>
+
+      <!-- Row 3 — two half-width stills -->
+      <div class="still"       aria-label="Still image placeholder"></div>
+      <div class="still"       aria-label="Still image placeholder"></div>
+
+      <!-- Row 4 — full-width break -->
+      <div class="still still--full" aria-label="Full-width still image placeholder"></div>
+
+    </div>
+
+  </main>
+
+  <script>
+
+    /* ============================================
+       NAV ACTIVE STATE
+       Clicking a link marks it active and clears the others.
+       On this page PROJECTS is pre-marked active in the HTML;
+       JS overrides on click just as on the homepage.
+    ============================================ */
+    const navLinks = document.querySelectorAll('[data-nav]');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('is-active'));
+        link.classList.add('is-active');
+      });
+    });
+
+    /* ============================================
+       CUSTOM CURSOR — hardware-accelerated tracking
+    ============================================ */
+    const cursor = document.querySelector('.custom-cursor');
+
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+    });
+
+  </script>
+
+</body>
+</html>

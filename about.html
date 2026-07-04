@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VFX Portfolio — About</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     RESET & BASE
+  ============================================ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background-color: #0a0a0a;
+    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  a, button, video {
+    cursor: none;
+  }
+
+  /* ============================================
+     CUSTOM CURSOR — difference-blended orange dot
+  ============================================ */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #d9531e;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  /* ============================================
+     NAVIGATION — exact replica, two-item
+  ============================================ */
+  .nav {
+    position: fixed;
+    top: 30px;
+    right: 100px;
+    z-index: 100;
+    border-radius: 0 !important;
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    background-color: rgba(17, 17, 17, 0.55);
+    backdrop-filter: blur(4px);
+    border-radius: 0 !important;
+  }
+
+  .nav__item {
+    margin: 0;
+    border-radius: 0 !important;
+  }
+
+  .nav__link {
+    display: block;
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+    border-radius: 0 !important;
+    line-height: 1;
+    position: relative;
+
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px 40px;
+
+    transition: background-color 0.25s ease;
+  }
+
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 48px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+  }
+
+  .nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav__link:focus-visible {
+    outline: 2px solid #d9531e;
+    outline-offset: -2px;
+  }
+
+  .nav__link.is-active {
+    background-color: #d9531e;
+  }
+
+  .nav__link.is-active:hover {
+    background-color: #c14a1a;
+  }
+
+  /* ============================================
+     NAMEPLATE — exact replica
+  ============================================ */
+  .nameplate {
+    position: fixed;
+    top: 30px;
+    left: 100px;
+    z-index: 100;
+    perspective: 500px;
+  }
+
+  .nameplate__cube {
+    position: relative;
+    width: 210px;
+    height: 22px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .nameplate:hover .nameplate__cube {
+    transform: rotateX(-90deg);
+  }
+
+  .nameplate__face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    backface-visibility: hidden;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  .nameplate__face--name {
+    color: #ffffff;
+    transform: rotateX(0deg) translateZ(11px);
+  }
+
+  .nameplate__face--title {
+    color: #d9531e;
+    transform: rotateX(90deg) translateZ(11px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nameplate__cube {
+      transition: none;
+    }
+  }
+
+  /* ============================================
+     MAIN CONTENT
+  ============================================ */
+  .content {
+    margin: 200px auto 100px 15%;
+    max-width: 650px;
+  }
+
+  /* ============================================
+     BIO TEXT
+  ============================================ */
+  .about-bio {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ============================================
+     CONTACT LIST
+  ============================================ */
+  .contact-list {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    row-gap: 8px;
+    column-gap: 40px;
+    align-items: center;
+    list-style: none;
+  }
+
+  .contact-list__label {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+  }
+
+  .contact-list__value {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .contact-list__value a {
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    color: #ffffff;
+  }
+
+  /* Animated underline — left-to-right fill on hover */
+  .contact-list__value a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 0;
+    background-color: #d9531e;
+    transition: width 0.3s ease;
+  }
+
+  .contact-list__value a:hover::after {
+    width: 100%;
+  }
+
+  /* ============================================
+     RESPONSIVE ADJUSTMENTS
+  ============================================ */
+  @media (max-width: 900px) {
+    .content {
+      margin: 160px 40px 100px;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nav {
+      top: 16px;
+      right: 16px;
+    }
+
+    .nav__link {
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      padding: 5px 20px;
+    }
+
+    .nameplate {
+      top: 16px;
+      left: 16px;
+    }
+
+    .nameplate__cube {
+      width: 170px;
+      height: 18px;
+    }
+
+    .nameplate__face {
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      margin: 120px 24px 80px;
+    }
+
+    .about-bio {
+      font-size: 16px;
+    }
+
+    .about-contact__label {
+      font-size: 16px;
+      width: 130px;
+    }
+
+    .about-contact__value a {
+      font-size: 16px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="custom-cursor"></div>
+
+  <!-- ============================================
+       NAMEPLATE — fixed top-left
+  ============================================ -->
+  <div class="nameplate" aria-label="Esra Sitepu, 3D Artist - FX">
+    <div class="nameplate__cube">
+      <span class="nameplate__face nameplate__face--name">Esra Sitepu</span>
+      <span class="nameplate__face nameplate__face--title">3D Artist - FX</span>
+    </div>
+  </div>
+
+  <!-- ============================================
+       NAVIGATION — fixed top-right, ABOUT active
+  ============================================ -->
+  <nav class="nav">
+    <ul class="nav__list">
+      <li class="nav__item"><a href="index.html#projects" class="nav__link"           data-nav>PROJECTS</a></li>
+      <li class="nav__item"><a href="about.html"          class="nav__link is-active" data-nav>ABOUT</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================
+       MAIN CONTENT
+  ============================================ -->
+  <main class="content">
+
+    <p class="about-bio">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. My tools of
+      choice are Houdini, Unreal and Karma and Solaris.
+    </p>
+
+    <ul class="contact-list">
+
+      <li class="contact-list__label">Contact -></li>
+      <li class="contact-list__value">
+        <a href="mailto:esrajan0101@gmail.com">esrajan0101@gmail.com</a>
+      </li>
+
+      <li class="contact-list__label">Instagram -></li>
+      <li class="contact-list__value">
+        <a href="https://instagram.com/cgace" target="_blank" rel="noopener noreferrer">@cgace</a>
+      </li>
+
+      <li class="contact-list__label">Blog -></li>
+      <li class="contact-list__value">
+        <a href="https://medium.com/esrasitepu" target="_blank" rel="noopener noreferrer">medium.com/esrasitepu</a>
+      </li>
+
+    </ul>
+
+  </main>
+
+  <script>
+
+    /* ============================================
+       NAV ACTIVE STATE
+    ============================================ */
+    const navLinks = document.querySelectorAll('[data-nav]');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('is-active'));
+        link.classList.add('is-active');
+      });
+    });
+
+    /* ============================================
+       CUSTOM CURSOR — hardware-accelerated tracking
+    ============================================ */
+    const cursor = document.querySelector('.custom-cursor');
+
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+    });
+
+  </script>
+
+</body>
+</html>
