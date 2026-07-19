@@ -23,7 +23,7 @@
   html, body {
     width: 100%;
     height: 100%;
-    background-color: #111111;
+    background-color: #000000;
     font-family: 'Manrope', Arial, Helvetica, sans-serif;
     color: #ffffff;
     overflow-x: hidden;
@@ -60,6 +60,8 @@
     left: 100px;
     z-index: 100;
     perspective: 500px;
+    opacity: 0;
+    animation: fadeUI 1.5s ease-in-out 1s forwards;
   }
 
   .nameplate__cube {
@@ -96,6 +98,7 @@
 
   .nameplate__face--title {
     color: #d9531e;
+    text-transform: none;
     transform: rotateX(90deg) translateZ(11px);
   }
 
@@ -113,13 +116,15 @@
     top: 30px;
     right: 100px;
     z-index: 100;
+    opacity: 0;
+    animation: fadeUI 1.5s ease-in-out 1s forwards;
   }
 
   .nav__list {
     display: flex;
     gap: 0;
     list-style: none;
-    background-color: rgba(17, 17, 17, 0.55);
+    background-color: #000000;
     backdrop-filter: blur(4px);
   }
 
@@ -158,11 +163,8 @@
   }
 
   .nav__link.is-active {
-    background-color: #d9531e;
-  }
-
-  .nav__link.is-active:hover {
-    background-color: #c14a1a;
+    background-color: #ffffff;
+    color: #000000;
   }
 
   /* ============================================
@@ -453,26 +455,17 @@
      MEDIA STACK — vertical stack of 16:9 items
   ============================================ */
   .media-stack {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-top: 80px;
-    padding: 0 100px;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 0 240px;
   }
 
   .media-stack__item {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
     overflow: hidden;
-  }
-
-  .media-stack__item:first-child,
-  .media-stack__item:last-child {
-    grid-column: span 2;
   }
 
   .media-stack__item video,
@@ -487,6 +480,102 @@
 
   /* Reuses .play-overlay / .is-playing behavior already defined above */
 
+  .media-caption p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #999999;
+    font-style: italic;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+
+  /* ============================================
+     SITE FOOTER
+  ============================================ */
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: 200px;
+    margin-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 50px 100px 0 100px;
+    width: 80%;
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    color: #ffffff;
+  }
+
+  .site-footer__right {
+    display: flex;
+    gap: 100px;
+  }
+
+  .site-footer__left span {
+    color: #999999;
+  }
+
+  .footer-link {
+    position: relative;
+    text-decoration: none;
+    color: #ffffff;
+    padding-bottom: 4px;
+  }
+
+  .footer-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: #ffffff;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .footer-link:hover::after {
+    width: 100%;
+  }
+
+  /* ============================================
+     HERO — full-width autoplaying video + caption
+  ============================================ */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    margin-bottom: 50px;
+  }
+
+  .hero__video {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero__caption {
+    padding: 0 320px 0 240px;
+  }
+
+  .hero__caption p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #999999;
+  }
+
+  /* ============================================
+     UI DISSOLVE — nav & nameplate fade in after load
+  ============================================ */
+  @keyframes fadeUI {
+    0% { opacity: 0; pointer-events: none; }
+    100% { opacity: 1; pointer-events: auto; }
+  }
+
 </style>
 </head>
 <body>
@@ -498,19 +587,32 @@
   <a href="index.html" class="nameplate" aria-label="Esra Sitepu, 3D Artist — FX">
     <div class="nameplate__cube">
       <span class="nameplate__face nameplate__face--name">Esra Sitepu</span>
-      <span class="nameplate__face nameplate__face--title">3D Artist - FX</span>
+      <span class="nameplate__face nameplate__face--title">3D Generalist</span>
     </div>
   </a>
 
   <!-- Navigation — fixed top-right, no active state on either item -->
   <nav class="nav">
     <ul class="nav__list">
-      <li class="nav__item"><a href="index.html" class="nav__link">PROJECTS</a></li>
+      <li class="nav__item"><a href="houdini.html" class="nav__link">HOUDINI</a></li>
+      <li class="nav__item"><a href="metahuman.html" class="nav__link is-active">UNREAL ENGINE</a></li>
       <li class="nav__item"><a href="about.html" class="nav__link">ABOUT</a></li>
     </ul>
   </nav>
 
   <div class="page">
+
+    <!-- ============================================
+         HERO — full-width autoplaying video + caption
+    ============================================ -->
+    <header class="hero">
+      <video autoplay loop muted playsinline class="hero__video">
+        <source src="./assets/showreel-intro.mp4" type="video/mp4">
+      </video>
+      <div class="hero__caption">
+        <p>An overview of Unreal Engine projects covering MetaHumans and environment builds. Work involves different roles on each project, handling both the technical and visual sides of production.</p>
+      </div>
+    </header>
 
     <!-- ============================================
          PROJECT INTRO — title, subtitle, description
@@ -519,8 +621,7 @@
       <h1 class="metahuman-intro__title">Metahuman</h1>
       <p class="metahuman-intro__subtitle">Pipeline, Lighting, Animation Clean-up, Rendering&nbsp;&nbsp;/&nbsp;&nbsp;XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
       <div class="metahuman-intro__body">
-        <p>This project involved the full integration of MetaHuman characters into a real-time production pipeline, combining Unreal Engine's rendering capabilities with Houdini-driven FX for cloth simulation, hair dynamics, and environmental interaction. The work spanned character look-development, lighting rigs built in Solaris, and final-frame rendering through Karma.</p>
-        <p>Animation clean-up was performed across motion-capture data to resolve contact artefacts and timing inconsistencies, ensuring characters read correctly against photoreal backgrounds. The pipeline was designed for iteration speed — enabling rapid lighting changes and material overrides without re-simulating — and ultimately delivered production-ready frames across multiple sequences for XLAB.</p>
+        <p>Managed the animation, lighting, layout, and rendering pipelines for MetaHuman assets. Directed human artists during facial motion capture sessions and processed the data to ensure natural facial articulation, such as correcting teeth and lip placement. Technical challenges included solving hair rendering glitches and configuring Unreal Engine's Console Variables to prioritize high-fidelity offline rendering over real-time performance.</p>
       </div>
     </section>
 
@@ -594,9 +695,7 @@
       <h1 class="environment-intro__title">Environment</h1>
       <p class="environment-intro__subtitle">Layout, Lighting, Camera work, Rendering&nbsp;&nbsp;/&nbsp;&nbsp;Aras Design &amp; Motion &amp; XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
       <div class="environment-intro__body">
-        <p>For environment work, i was responsible with layout, lighting, to modeling. As well as camera work such as pacing, blocking all assets and the camera, and also animate the camera itself.</p>
-        <p>my job also involve in placing camera, pacing the animation, as well as placement or placing the camera.</p>
-        <p>One of my earliest work is for BRI, i was responsible for all the aspect, for scatering i was utilize the scattering and the layout is based on the concept and that already provided, rendered with lumen.</p>
+        <p>Responsible for lighting, rendering, and camera work for these environment projects, which were rendered in Unreal Engine (excluding the Traveloka project). The process involved establishing the initial scene blocking for both assets and cameras. Further responsibilities included defining camera specifications, directing camera movement, and executing in-engine editing using Sequencer.</p>
       </div>
     </section>
 
@@ -605,26 +704,26 @@
     ============================================ -->
     <section class="media-stack" aria-label="Environment media stack">
 
-      <!-- Item 1: video (Blue placeholder) -->
-      <div class="media-stack__item">
+      <!-- Item 1: video (Green placeholder) -->
+      <div class="media-stack__item" style="aspect-ratio: 1920 / 1080;">
         <video
           loop
           muted
           playsinline
-          style="background-color:#1e3a8a;"
+          style="background-color:#166534;"
           aria-label="Environment clip 1">
           <source src="./assets/environment-01.mp4" type="video/mp4">
         </video>
         <div class="play-overlay"></div>
       </div>
 
-      <!-- Item 2: video (Green placeholder) -->
-      <div class="media-stack__item">
+      <!-- Item 2: video (Blue placeholder) -->
+      <div class="media-stack__item" style="aspect-ratio: 1926 / 376;">
         <video
           loop
           muted
           playsinline
-          style="background-color:#166534;"
+          style="background-color:#1e3a8a;"
           aria-label="Environment clip 2">
           <source src="./assets/environment-02.mp4" type="video/mp4">
         </video>
@@ -632,7 +731,7 @@
       </div>
 
       <!-- Item 3: video (Green placeholder) -->
-      <div class="media-stack__item">
+      <div class="media-stack__item" style="aspect-ratio: 1918 / 950;">
         <video
           loop
           muted
@@ -645,7 +744,7 @@
       </div>
 
       <!-- Item 4: video (Green placeholder) -->
-      <div class="media-stack__item">
+      <div class="media-stack__item" style="aspect-ratio: 1920 / 1080;">
         <video
           loop
           muted
@@ -656,9 +755,12 @@
         </video>
         <div class="play-overlay"></div>
       </div>
+      <div class="media-caption">
+        <p>This project was done in Cinema 4D. Work focused entirely on handling the asset layout and setting up the staging for every scene.</p>
+      </div>
 
       <!-- Item 5: video (Green placeholder) -->
-      <div class="media-stack__item">
+      <div class="media-stack__item" style="aspect-ratio: 1918 / 848;">
         <video
           loop
           muted
@@ -671,11 +773,25 @@
       </div>
 
       <!-- Item 6: final still -->
-      <div class="media-stack__item">
+      <div class="media-stack__item" style="aspect-ratio: 1916 / 822;">
         <img src="./assets/environment-06.png" alt="Environment final still" style="background-color:#333333;">
+      </div>
+      <div class="media-caption">
+        <p>This was our first internal project in Unreal Engine, serving as an exploration into rendering workflows using the engine's Path Tracer.</p>
       </div>
 
     </section>
+
+    <footer class="site-footer">
+      <div class="site-footer__left">
+        <span>(C) 2026</span>
+      </div>
+      <div class="site-footer__right">
+        <a href="#" class="footer-link">CV</a>
+        <a href="#" class="footer-link">Instagram</a>
+        <a href="#" class="footer-link">Email</a>
+      </div>
+    </footer>
 
   </div><!-- /.page -->
 
