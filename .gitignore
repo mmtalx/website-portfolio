@@ -1,3 +1,7 @@
+# Ignore all video files by default
 *.mp4
 *.mov
 *.mkv
+
+# Allow specific lightweight videos to be uploaded
+!assets/grandairy/grandairy_final_render.mp4
