@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Machine — Esra Sitepu</title>
+<title>Tool Development — Esra Sitepu</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -168,7 +168,7 @@
      CANDLE PROJECT PAGE
   ============================================ */
 
-  /* Page container — matches the Metahuman indentation */
+  /* Page container — matches the nameplate's left: 100px position */
   .page-container {
     padding: 0 240px;
     padding-top: 150px; /* Clears the fixed header */
@@ -212,7 +212,7 @@
   }
 
   /* Media stack — vertical container for all media blocks */
-  .machine-stack {
+  .tool-stack {
     display: flex;
     flex-direction: column;
     gap: 5px; /* Strict 5px gap matching the site's dividing lines */
@@ -249,28 +249,47 @@
     aspect-ratio: 1 / 1;
   }
 
-  .rnd-section {
-    margin-top: 115px; /* 115px margin + 5px parent flex gap = 120px total distance */
+  .media-block--square-small {
+    aspect-ratio: 1 / 1;
+    max-width: 650px;
+    background-color: #111111;
+    margin-top: -4px;
   }
 
-  .rnd-caption {
-    max-width: 650px;
+  .media-block--indented {
+    margin-left: 32px;
+    width: calc(100% - 32px);
+  }
+
+  .tool-section {
+    margin-top: 40px;
     margin-bottom: 20px;
   }
 
-  .rnd-caption p {
+  .tool-section__title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    margin-bottom: 16px;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .tool-section__body {
+    max-width: 750px;
+    margin-left: 32px;
+    padding-left: 0;
+  }
+
+  .tool-section__body p {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
     color: #999999;
-  }
-
-  .media-grid--two-col-small {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-    max-width: 100%; /* Changed from 800px to fill the container */
+    margin-bottom: 16px;
+    margin-left: 0;
+    padding-left: 0;
   }
 
   .placeholder-text {
@@ -373,38 +392,6 @@
     opacity: 0;
   }
 
-  /* ============================================
-     IMAGE LIGHTBOX OVERLAY
-  ============================================ */
-  .lightbox-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(5px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    cursor: none;
-  }
-
-  .lightbox-overlay.is-active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .lightbox-overlay img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-  }
-
 </style>
 </head>
 <body>
@@ -423,7 +410,7 @@
   <nav class="nav">
     <ul class="nav__list">
       <li class="nav__item"><a href="houdini.html" class="nav__link is-active">HOUDINI</a></li>
-      <li class="nav__item"><a href="metahuman.html" class="nav__link">UNREAL ENGINE</a></li>
+      <li class="nav__item"><a href="unrealengine.html" class="nav__link">UNREAL ENGINE</a></li>
       <li class="nav__item"><a href="index.html" class="nav__link">ABOUT</a></li>
     </ul>
   </nav>
@@ -435,47 +422,29 @@
       <!-- Intro Section -->
       <section class="project-intro">
         <div class="project-intro__left">
-          <h1 class="project-intro__title">Machine</h1>
+          <h1 class="project-intro__title">Tool Development</h1>
           <div class="project-intro__meta">
-            <p>All Aspects&nbsp;&nbsp;/&nbsp;&nbsp;Personal Project&nbsp;&nbsp;/&nbsp;&nbsp;2025</p>
+            <p>All Aspects&nbsp;&nbsp;/&nbsp;&nbsp;Personal Project&nbsp;&nbsp;/&nbsp;&nbsp;2025 - 2026</p>
           </div>
         </div>
         <div class="project-intro__body">
-          <p>learning about USD inside Solaris with Houdini. in this case i also sharpening my modelling skills. i thought it would be beneficial as my familiariaze myself with houdini it would be good to postpone any simulation kind of things and just focused on easy thing such as setup lighting and undertsanding rendering with Karma.</p>
-          <p>as well as this, i also it would be a perfect timing to learning USD and jump in into solaris to cover all the lighting and rendering part.</p>
-          <p>modeling was done with blender, texturing with substance painter and lighing, rendering in karma with USD.</p>
+          <p>during experiment and commerial project i often come up with the idea inspired with some problem during production process. all of thsetools are actively use in production and work together with an LLM done with vibe coding with LLM.</p>
         </div>
       </section>
 
       <!-- Media Stack -->
-      <section class="machine-stack">
+      <section class="tool-stack">
 
-        <!-- 1. Lighting Test (Full Width) -->
-        <video class="media-block" src="assets/machine/machine_lighting_test.mp4" loop muted playsinline></video>
-
-        <!-- 2. Render Stills (3-Column Square Grid) -->
-        <div class="media-grid--three-col">
-          <img class="media-block media-block--square" src="assets/machine/machine_karma_render_01.png" alt="Karma Render 01">
-          <img class="media-block media-block--square" src="assets/machine/machine_karma_render_02.png" alt="Karma Render 02">
-          <img class="media-block media-block--square" src="assets/machine/machine_karma_render_03.png" alt="Karma Render 03">
-        </div>
-
-        <!-- 3. Viewport Screen Record (Full Width) -->
-        <video class="media-block" src="assets/machine/machine_viewport.mp4" loop muted playsinline></video>
-
-        <div class="rnd-section">
-          <div class="rnd-caption">
-            <p>during the RND process, i was interested onn testing some sim and convert them to USD. here are some of the test that didnt continue to the end.</p>
-          </div>
-          <div class="media-grid--two-col-small">
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_01.mp4" loop muted playsinline></video>
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_02.mp4" loop muted playsinline></video>
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_03.mp4" loop muted playsinline></video>
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_04.mp4" loop muted playsinline></video>
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_05.mp4" loop muted playsinline></video>
-            <video class="media-block media-block--square" src="assets/machine/machine_rnd_06.mp4" loop muted playsinline></video>
+        <div class="tool-section">
+          <h2 class="tool-section__title">1. Flipbook Burner</h2>
+          <div class="tool-section__body">
+            <p>during working on a FLIP experiment i face there so many iterations. sometimes it's so hard to track each versioning level with the current level since it require instence saving the file into a new version.</p>
+            <p>that's why creating this tool helo to burn-in some important data from</p>
+            <p>this flipbook could taking the data from the solver with all of the necessary settings to help to troubleshoot the output that useful for artist and supervisor during production.</p>
           </div>
         </div>
+        <video class="media-block media-block--indented" src="assets/tool-development/tool_flipbook_burner.mp4" loop muted playsinline></video>
+        <video class="media-block media-block--square-small media-block--indented" src="assets/tool-development/tool_flipbook_burner_square.mp4" loop muted playsinline></video>
 
       </section>
 
@@ -537,31 +506,6 @@
           video.pause();
           wrapper.classList.remove('is-playing');
         }
-      });
-    });
-
-    /* ============================================
-       IMAGE LIGHTBOX INTERACTION
-    ============================================ */
-    // 1. Create the lightbox overlay dynamically
-    const lightbox = document.createElement('div');
-    lightbox.className = 'lightbox-overlay';
-    const lightboxImg = document.createElement('img');
-    lightbox.appendChild(lightboxImg);
-    document.body.appendChild(lightbox);
-
-    // 2. Handle closing the lightbox
-    lightbox.addEventListener('click', () => {
-      lightbox.classList.remove('is-active');
-      // Clear the image source after the fade-out transition finishes
-      setTimeout(() => { lightboxImg.src = ''; }, 300);
-    });
-
-    // 3. Attach click events to all images
-    document.querySelectorAll('img.media-block').forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightbox.classList.add('is-active');
       });
     });
 
