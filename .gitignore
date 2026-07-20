@@ -1,6 +1,0 @@
-# Ignore all video files by default
-*.mp4
-
-# Allow ALL mp4 files inside the grandairy folder
-!assets/grandairy/*.mp4
-assets/environment-06.png
