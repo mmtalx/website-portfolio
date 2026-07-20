@@ -244,6 +244,44 @@
   }
 
   /* ============================================
+     MEDIA WRAPPER & PLAY OVERLAY
+  ============================================ */
+  .media-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(17, 17, 17, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+  .play-overlay::after {
+    content: '';
+    display: block;
+    margin-left: 6px;
+    border-style: solid;
+    border-width: 12px 0 12px 20px;
+    border-color: transparent transparent transparent #ffffff;
+  }
+  .media-wrapper.is-playing .play-overlay {
+    opacity: 0;
+  }
+
+  /* ============================================
      SITE FOOTER
   ============================================ */
   .site-footer {
@@ -338,30 +376,57 @@
       <section class="grandairy-stack">
 
         <!-- 1. Final Render (Full Width) -->
-        <video class="media-block" src="assets/grandairy/grandairy_final_render.mp4" autoplay loop muted playsinline></video>
+        <div class="media-wrapper is-playing">
+          <video class="media-block" src="assets/grandairy/grandairy_final_render.mp4" autoplay loop muted playsinline></video>
+          <div class="play-overlay"></div>
+        </div>
 
         <!-- 2. Process Grid (2x2) -->
         <div class="media-grid">
-          <video class="media-block" src="assets/grandairy/grandairy_process_grid_01.mp4" loop muted playsinline></video>
+          <div class="media-wrapper">
+            <video class="media-block" src="assets/grandairy/grandairy_process_grid_01.mp4" loop muted playsinline></video>
+            <div class="play-overlay"></div>
+          </div>
 
-          <video class="media-block" src="assets/grandairy/grandairy_process_grid_02.mp4" loop muted playsinline></video>
+          <div class="media-wrapper">
+            <video class="media-block" src="assets/grandairy/grandairy_process_grid_02.mp4" loop muted playsinline></video>
+            <div class="play-overlay"></div>
+          </div>
 
-          <video class="media-block" src="assets/grandairy/grandairy_process_grid_03.mp4" loop muted playsinline></video>
+          <div class="media-wrapper">
+            <video class="media-block" src="assets/grandairy/grandairy_process_grid_03.mp4" loop muted playsinline></video>
+            <div class="play-overlay"></div>
+          </div>
 
-          <video class="media-block" src="assets/grandairy/grandairy_process_grid_04.mp4" loop muted playsinline></video>
+          <div class="media-wrapper">
+            <video class="media-block" src="assets/grandairy/grandairy_process_grid_04.mp4" loop muted playsinline></video>
+            <div class="play-overlay"></div>
+          </div>
         </div>
 
         <!-- 3. Look Dev (Full Width) -->
-        <video class="media-block" src="assets/grandairy/grandairy_lookdev.mp4" loop muted playsinline></video>
+        <div class="media-wrapper">
+          <video class="media-block" src="assets/grandairy/grandairy_lookdev.mp4" loop muted playsinline></video>
+          <div class="play-overlay"></div>
+        </div>
 
         <!-- 4. SH02 (Full Width) -->
-        <video class="media-block" src="assets/grandairy/grandairy_sh02.mp4" loop muted playsinline></video>
+        <div class="media-wrapper">
+          <video class="media-block" src="assets/grandairy/grandairy_sh02.mp4" loop muted playsinline></video>
+          <div class="play-overlay"></div>
+        </div>
 
         <!-- 5. SH02 04 (Full Width) -->
-        <video class="media-block" src="assets/grandairy/grandairy_sh02_04.mp4" loop muted playsinline></video>
+        <div class="media-wrapper">
+          <video class="media-block" src="assets/grandairy/grandairy_sh02_04.mp4" loop muted playsinline></video>
+          <div class="play-overlay"></div>
+        </div>
 
         <!-- 6. Process Timelapse / Thumbnail (Full Width) -->
-        <video class="media-block" src="assets/grandairy/grandairy_process_timelapse.mp4" loop muted playsinline></video>
+        <div class="media-wrapper">
+          <video class="media-block" src="assets/grandairy/grandairy_process_timelapse.mp4" loop muted playsinline></video>
+          <div class="play-overlay"></div>
+        </div>
 
       </section>
 
@@ -392,16 +457,21 @@
     });
 
     /* ============================================
-       VIDEO CLICK-TO-PLAY/PAUSE
+       MANUAL CLICK-TO-PLAY WITH OVERLAY
     ============================================ */
-    const mediaBlocks = document.querySelectorAll('video.media-block');
-    mediaBlocks.forEach(video => {
-      video.style.cursor = 'none';
-      video.addEventListener('click', () => {
+    const mediaWrappers = document.querySelectorAll('.media-wrapper');
+    mediaWrappers.forEach(wrapper => {
+      const video = wrapper.querySelector('video');
+      if (!video) return;
+      // Ensure cursor indicates interactivity on the wrapper
+      wrapper.style.cursor = 'none';
+      wrapper.addEventListener('click', () => {
         if (video.paused) {
           video.play();
+          wrapper.classList.add('is-playing');
         } else {
           video.pause();
+          wrapper.classList.remove('is-playing');
         }
       });
     });
