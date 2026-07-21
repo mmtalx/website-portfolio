@@ -177,10 +177,10 @@
   }
 
   /* ============================================
-     METAHUMAN INTRO — project header text block
+     METAHUMAN INTRO 
   ============================================ */
   .metahuman-intro {
-    padding: 0 320px 0 240px;
+    padding: 0 240px 0 240px;
     margin-top: 150px;
     flex-shrink: 0;
   }
@@ -207,9 +207,6 @@
     margin-bottom: 32px;
   }
 
-  .metahuman-intro__body {
-  }
-
   .metahuman-intro__body p {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
@@ -217,6 +214,7 @@
     line-height: 1.6;
     color: #999999;
     margin-bottom: 16px;
+    max-width: 800px;
   }
 
   .metahuman-intro__body p:last-child {
@@ -407,15 +405,13 @@
   }
 
   /* ============================================
-     ENVIRONMENT INTRO — project header text block
-     (mirrors .metahuman-intro exactly)
+     ENVIRONMENT INTRO
   ============================================ */
   .environment-intro {
-    padding: 0 320px 0 240px;
+    padding: 0 240px 0 240px;
     margin-top: 200px;
     flex-shrink: 0;
   }
-
   .environment-intro__title {
     font-family: 'Manrope', sans-serif;
     font-weight: 800;
@@ -426,7 +422,6 @@
     line-height: 1;
     margin-bottom: 10px;
   }
-
   .environment-intro__subtitle {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
@@ -437,7 +432,6 @@
     text-transform: none;
     margin-bottom: 32px;
   }
-
   .environment-intro__body p {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
@@ -445,8 +439,8 @@
     line-height: 1.6;
     color: #999999;
     margin-bottom: 16px;
+    max-width: 800px;
   }
-
   .environment-intro__body p:last-child {
     margin-bottom: 0;
   }
@@ -557,8 +551,11 @@
     display: block;
   }
 
+  /* ============================================
+     HERO CAPTION
+  ============================================ */
   .hero__caption {
-    padding: 0 320px 0 240px;
+    padding: 0 240px 0 240px;
   }
 
   .hero__caption p {
@@ -566,6 +563,7 @@
     font-size: 18px;
     line-height: 1.6;
     color: #999999;
+    max-width: 800px;
   }
 
   /* ============================================
@@ -619,11 +617,10 @@
     ============================================ -->
     <section class="environment-intro">
       <h1 class="environment-intro__title">Environment</h1>
-      <p class="environment-intro__subtitle">Layout, Lighting, Camera work, Rendering&nbsp;&nbsp;/&nbsp;&nbsp;Aras Design &amp; Motion &amp; XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
+      <p class="environment-intro__subtitle">Layout, Lighting, Rendering, Technical Artist&nbsp;&nbsp;/&nbsp;&nbsp;Aras Design Motion &amp; XLAB&nbsp;&nbsp;/&nbsp;&nbsp;2023 – 2025</p>
       <div class="environment-intro__body">
-        <p>I was responsible for layout, lighting, and rendering. For the environment and camera layout, our team handled the ideation and research internally to support the director's vision, as dedicated concept art was only provided for commercial projects like Traveloka.</p>
-        <p>The lighting setup was fully dynamic, utilizing Ultra Dynamic Sky and supplementary rectangle lights without any baked lighting.</p>
-        <p>Rendering was executed in Unreal Engine using Lumen with Hardware Raytracing enabled. I managed the rendering pipeline through the Movie Render Queue (MRQ) and set up render passes using the Movie Render Graph (MRG). Additionally, I was responsible for troubleshooting and resolving optimization bottlenecks and rendering artifacts that arise during production.</p>
+        <p>My responsibilities included layout, lighting, and rendering. Because dedicated concept art was only provided for commercial projects like Traveloka, our team independently managed the ideation and research for the environment and camera layouts to align with the director's vision.</p>
+        <p>I implemented a fully dynamic lighting setup using Ultra Dynamic Sky and supplementary rectangle lights, avoiding baked lighting entirely. For final output, I rendered the scenes in Unreal Engine using Lumen with Hardware Raytracing enabled, managing the pipeline via the Movie Render Queue (MRQ) and Movie Render Graph (MRG). Throughout production, I also troubleshooted and resolved optimization bottlenecks and rendering artifacts.</p>
       </div>
     </section>
 
