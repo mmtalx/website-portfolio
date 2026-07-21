@@ -187,31 +187,32 @@
   ============================================ */
   .contact-list {
     margin-top: 80px;
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    row-gap: 8px;
-    column-gap: 40px;
-    align-items: center;
-    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .contact-list__label {
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .contact-label {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
     font-size: 18px;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.5);
     white-space: nowrap;
+    width: 140px;
   }
 
-  .contact-list__value {
+  .contact-link {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
     font-size: 18px;
     line-height: 1.6;
-  }
-
-  .contact-list__value a {
     text-decoration: none;
     position: relative;
     display: inline-block;
@@ -219,7 +220,7 @@
   }
 
   /* Animated underline — left-to-right fill on hover */
-  .contact-list__value a::after {
+  .contact-link::after {
     content: '';
     position: absolute;
     left: 0;
@@ -230,7 +231,7 @@
     transition: width 0.3s ease;
   }
 
-  .contact-list__value a:hover::after {
+  .contact-link:hover::after {
     width: 100%;
   }
 
@@ -279,12 +280,23 @@
       font-size: 16px;
     }
 
-    .about-contact__label {
-      font-size: 16px;
-      width: 130px;
+    .contact-list {
+      margin-top: 60px;
+      gap: 16px;
     }
 
-    .about-contact__value a {
+    .contact-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .contact-label {
+      font-size: 16px;
+      width: auto;
+    }
+
+    .contact-link {
       font-size: 16px;
     }
   }
@@ -325,24 +337,24 @@
       I am a 3D Generalist specializing in FX and cinematics using Houdini and Unreal Engine, driven by both technical problem-solving and visual artistry.
     </p>
 
-    <ul class="contact-list">
+    <div class="contact-list">
 
-      <li class="contact-list__label">Contact -></li>
-      <li class="contact-list__value">
-        <a href="mailto:esrajan0101@gmail.com">esrajan0101@gmail.com</a>
-      </li>
+      <div class="contact-row">
+        <span class="contact-label">CV &rarr;</span>
+        <a href="https://drive.google.com/file/d/1AZAgx2SJY-o9gkJJCKn1Es5ubmyg-2Lw/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="contact-link">Download</a>
+      </div>
 
-      <li class="contact-list__label">Instagram -></li>
-      <li class="contact-list__value">
-        <a href="https://instagram.com/cgace" target="_blank" rel="noopener noreferrer">@cgace</a>
-      </li>
+      <div class="contact-row">
+        <span class="contact-label">Instagram &rarr;</span>
+        <a href="https://www.instagram.com/cgace_/" target="_blank" rel="noopener noreferrer" class="contact-link">@cgace_</a>
+      </div>
 
-      <li class="contact-list__label">Blog -></li>
-      <li class="contact-list__value">
-        <a href="https://medium.com/esrasitepu" target="_blank" rel="noopener noreferrer">medium.com/esrasitepu</a>
-      </li>
+      <div class="contact-row">
+        <span class="contact-label">Email &rarr;</span>
+        <a href="#" id="copyEmailBtn" class="contact-link">esrajps@gmail.com</a>
+      </div>
 
-    </ul>
+    </div>
 
   </main>
 
@@ -356,6 +368,27 @@
     window.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
     });
+
+    /* ============================================
+       COPY EMAIL TO CLIPBOARD
+    ============================================ */
+    const copyEmailBtn = document.getElementById('copyEmailBtn');
+
+    if (copyEmailBtn) {
+      copyEmailBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const emailAddress = 'esrajps@gmail.com';
+
+        navigator.clipboard.writeText(emailAddress).then(() => {
+          copyEmailBtn.innerText = 'Copied!';
+          setTimeout(() => {
+            copyEmailBtn.innerText = emailAddress;
+          }, 2000); // Reverts back after 2 seconds
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      });
+    }
 
   </script>
 
